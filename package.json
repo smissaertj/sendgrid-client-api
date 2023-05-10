@@ -2,11 +2,13 @@
   "name": "sendgrid-client-api",
   "version": "1.0.0",
   "devDependencies": {
+    "eslint": "^8.39.0",
     "wrangler": "2.14.0"
   },
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler publish"
+    "dev": "npm run eslint && wrangler dev",
+    "deploy": "wrangler publish --env prod",
+    "eslint": "eslint src/*.js"
   }
 }

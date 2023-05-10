@@ -1,3 +1,8 @@
 name = "sendgrid-client-api"
 main = "src/index.js"
 compatibility_date = "2023-04-06"
+workers_dev = true
+
+[env.prod]
+name = "sendgrid-client-api-prod"
+route = { pattern = "joerismissaert.dev/sendMail", zone_name = "joerismissaert.dev" }
