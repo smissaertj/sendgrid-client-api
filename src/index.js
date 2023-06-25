@@ -4,7 +4,7 @@ export default {
       let body = null;
       const responseHeaders = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONSx",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Js-Auth-Key, Content-Type",
         "Content-Type": "application/json;charset=UTF-8"
       };
