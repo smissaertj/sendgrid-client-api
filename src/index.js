@@ -41,9 +41,10 @@ export default {
           ],
         } )
       } );
-      console.log( response );
-      return new Response( JSON.stringify( response ), {
+      console.log( response.status );
+      return new Response( null, {
         headers: corsHeaders,
+        status: response.status,
       } );
     }
 
@@ -74,7 +75,16 @@ export default {
       request.method === "POST"
     ) {
       // Handle requests to the API server
-      return handlePost( request );
+      if ( request.headers.get( "Js-Auth-Key" ) === env.JS_AUTH_KEY ){
+        return handlePost( request );
+      } else {
+        let body = { "success": false, "message": "Unauthorized" };
+        return new Response( JSON.stringify( body ), {
+          status: 401,
+          statusText: "Unauthorized",
+          headers: corsHeaders,
+        } );
+      }
     } else {
       return new Response( null, {
         status: 405,
