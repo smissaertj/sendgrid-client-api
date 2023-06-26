@@ -12,7 +12,9 @@ export default {
 
     async function handlePost( request ) {
       const { name, email, message } = await request.json();
-      let response = await fetch( "https://api.sendgrid.com/v3/mail/send", {
+
+      request = new Request( "https://api.sendgrid.com/v3/mail/send" );
+      let response = await fetch( request, {
         method: "POST",
         headers: {
           // eslint-disable-next-line no-undef
@@ -41,8 +43,14 @@ export default {
           ],
         } )
       } );
-      console.log( response.status );
-      return new Response( null, {
+      let body;
+      if( response?.ok === true ){
+        body = { "success": true, "message": "Message sent successfully" };
+      } else {
+        console.error( response.status, response.statusText );
+        body = { "success": false, "message": response.statusText };
+      }
+      return new Response( JSON.stringify( body ), {
         headers: corsHeaders,
         status: response.status,
       } );
