@@ -10,10 +10,10 @@ export default {
     };
 
 
-    async function handlePost( request ) {
-      const { name, email, message } = await request.json();
+    async function handlePost( name, email, message ) {
 
-      request = new Request( "https://api.sendgrid.com/v3/mail/send" );
+
+      let request = new Request( "https://api.sendgrid.com/v3/mail/send" );
       let response = await fetch( request, {
         method: "POST",
         headers: {
@@ -76,6 +76,12 @@ export default {
       }
     }
 
+    function validateEmail( email ){
+    // Regular expression pattern to validate email addresses
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/i;
+      return emailRegex.test( email );
+    }
+
     if ( request.method === "OPTIONS" ) {
       // Handle CORS preflight requests
       return handleOptions( request );
@@ -84,7 +90,27 @@ export default {
     ) {
       // Handle requests to the API server
       if ( request.headers.get( "Js-Auth-Key" ) === env.JS_AUTH_KEY ){
-        return handlePost( request );
+        const { name, email, message } = await request.json();
+
+        if( !name || !message || !email ){
+          let body = { "success": false, "message": "Missing required fields" };
+          return new Response( JSON.stringify( body ), {
+            status: 400,
+            statusText: "Bad Request",
+            headers: corsHeaders,
+          } );
+        }
+
+        if( !validateEmail( email ) ){
+          let body = { "success": false, "message": "Invalid email address" };
+          return new Response( JSON.stringify( body ), {
+            status: 400,
+            statusText: "Bad Request",
+            headers: corsHeaders,
+          } );
+        }
+
+        return handlePost( name, email, message );
       } else {
         let body = { "success": false, "message": "Unauthorized" };
         return new Response( JSON.stringify( body ), {
